@@ -42,6 +42,11 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 1" {
 //			// Linear Dodge
 			Blend One One
 			
+			// Premultiplied transparency
+			Blend SrcAlpha OneMinusSrcAlpha
+			
+			ColorMask 0
+			
 			CGPROGRAM
 			
 			#pragma vertex vert
