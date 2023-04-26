@@ -45,7 +45,7 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 1" {
 			// Premultiplied transparency
 			Blend SrcAlpha OneMinusSrcAlpha
 			
-			ColorMask 0
+//			ColorMask 0
 			
 			CGPROGRAM
 			
