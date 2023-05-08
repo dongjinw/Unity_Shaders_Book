@@ -81,7 +81,6 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 1" {
 			
 			fixed4 frag(v2f i) : SV_Target {				
 				fixed4 texColor = tex2D(_MainTex, i.uv);
-			 	
 				return fixed4(texColor.rgb * _Color.rgb, texColor.a * _AlphaScale);
 			}
 			

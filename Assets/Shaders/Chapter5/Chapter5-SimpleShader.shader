@@ -17,6 +17,9 @@ Shader "Unity Shaders Book/Chapter 5/Simple Shader" {
 	SubShader {
 		Tags { "Queue" = "Transparent"}
         Pass {
+        	
+        	Name "MyPass"
+        	
             CGPROGRAM
 
             #pragma multi_compile __ ENABLE_EXAMPLE_FEATURE
