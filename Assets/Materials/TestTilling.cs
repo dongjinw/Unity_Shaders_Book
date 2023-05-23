@@ -17,8 +17,7 @@ public class TestTilling : MonoBehaviour
 
     private MeshRenderer _renderer;
     
-    void Start()
-    {
+    void Start() {
         _renderer = GetComponent<MeshRenderer>();
         if (_renderer != null)
             _renderer.material.SetTextureScale("_MainTex", new Vector2(0.5f, 1));

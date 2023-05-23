@@ -7,14 +7,14 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 0" {
 		_AlphaScale ("Alpha Scale", Range(0, 1)) = 1
 	}
 	SubShader {
-		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+//		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
 		
 		Pass {
 			Tags { "LightMode"="ForwardBase" }
 			
-			ZWrite Off
+//			ZWrite Off
 			
-			Blend SrcAlpha OneMinusSrcAlpha, One Zero
+//			Blend SrcAlpha OneMinusSrcAlpha, One Zero
 			
 			CGPROGRAM
 			
@@ -57,5 +57,5 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 0" {
 			ENDCG
 		}
 	} 
-	FallBack "Transparent/VertexLit"
+	FallBack "Diffuse"
 }

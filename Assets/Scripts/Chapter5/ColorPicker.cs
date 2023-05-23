@@ -2,13 +2,16 @@
 /// Author: Lele Feng 
 /// </summary>
 
+using System;
 using UnityEngine;
 using System.Collections;
 
+// [ExecuteInEditMode]
 public class ColorPicker : MonoBehaviour {
 	
 	private Camera _camera;
 	public BoxCollider pickerCollider;
+	// private bool _isCreatePickerCollider;
 
 	private bool _grab;
 	private Texture2D _screenRenderTexture;
@@ -25,16 +28,26 @@ public class ColorPicker : MonoBehaviour {
 			Debug.LogError("You need to dray this script to a camera!");
 			return;
 		}
+		
+		_camera.depthTextureMode = DepthTextureMode.Depth;
 
 		// Attach a BoxCollider to this camera
 		// In order to receive mouse events
 		if (pickerCollider != null) return;
 		pickerCollider = gameObject.AddComponent<BoxCollider>();
+		// _isCreatePickerCollider = true;
 		// Make sure the collider is in the camera's frustum
 		pickerCollider.center = Vector3.zero;
-		pickerCollider.center += _camera.transform.worldToLocalMatrix.MultiplyVector(_camera.transform.forward) * (_camera.nearClipPlane + 0.05f);
+		pickerCollider.center += _camera.transform.worldToLocalMatrix.MultiplyVector(_camera.transform.forward) * (_camera.nearClipPlane + 0.1f);
 		pickerCollider.size = new Vector3(Screen.width, Screen.height, 0.1f);
 	}
+
+	// private void OnDestroy() {
+	// 	if (_isCreatePickerCollider) {
+	// 		_isCreatePickerCollider = false;
+	// 		if (pickerCollider != null) Destroy(pickerCollider);
+	// 	}
+	// }
 
 	private void OnMouseDown() {
 		_grab = true;
