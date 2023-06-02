@@ -82,7 +82,8 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 1"
                 float4 screenPos : TEXCOORD1;
                 float3 normal : TEXCOORD2;
                 float3 viewDir : TEXCOORD3;
-                float4 test : POSITION1;
+                float4 test1 : POSITION1;
+                float4 test2 : POSITION2;
             };
 
             v2f vert(a2v v)
@@ -97,7 +98,8 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 1"
                 o.screenPos = ComputeScreenPos(o.pos);
                 o.normal = UnityObjectToWorldNormal(v.normal);
                 o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
-                o.test = o.pos / o.pos.w;
+                o.test1 = o.pos;
+                o.test2 = o.pos / o.pos.w;
                 // o.test = ComputeScreenPos(o.test);
                 // float4 tt = o.pos * 0.5f;
                 // tt.xy = float2(tt.x, tt.y*_ProjectionParams.x) + tt.w;
@@ -111,29 +113,37 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 1"
             {
                 // fixed4 texColor = tex2D(_MainTex, i.uv);
                 fixed4 texColor = UNITY_SAMPLE_TEX2D(_MainTex, i.uv);
-                float2 screenUV = i.screenPos.xy / i.screenPos.w;
-                
-                // float4 halfTest = i.test * 0.5f;
-                // float2 screenUV = float2(halfTest.x, halfTest.y * _ProjectionParams.x) + 0.5f;
-                // float2 screenUV = ComputeScreenPos(i.test);
+                // return fixed4(texColor.rgb * _Color.rgb, texColor.a * _AlphaScale);
 
-                // float2 screenUV = i.test;
+                float2 screenUV;
+
+                // 标准写法
+                // screenUV = i.screenPos.xy / i.screenPos.w;
+
+                // 这个写法是可行的，就很奇怪，只能说明 i.pos.xy 就是片元所在的屏幕位置。
+                // screenUV = i.pos.xy / _ScreenParams.xy;
+
+                // 这个写法是可行的，因为 test1 数据在插值之后才进行除法运算。
+                float4 test1 = i.test1;
+                test1 /= 2 * test1.w;
+                screenUV = float2(test1.x, test1.y * _ProjectionParams.x) + 0.5f;
+                
+                // 这个写法是不行的，因为 test2 数据是在插值之前进行了除法运算。
+                // float4 test2 = i.test2 * 0.5f;
+                // screenUV = float2(test2.x, test2.y * _ProjectionParams.x) + 0.5f;
                 
                 float depth = Linear01Depth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenUV));
                 half3 depthColor = lerp(half3(0, 0, 0), _Color, depth);
                 float fresnel = pow(1 - max(0, dot(i.normal, i.viewDir)), _EdgePow) * _EdgeMultiple;
                 half3 finalColor = lerp(depthColor, texColor, fresnel);
+                
+                return fixed4(finalColor, 1);
 
-                // cross(texColor, texColor);
-
-                // return fixed4(texColor.rgb * _Color.rgb, texColor.a * _AlphaScale);
-
+                // Test UNITY_MATRIX_P
                 // float a = UNITY_MATRIX_P[3].z + 2.5;
                 // float a = i.pos.y / _ScreenParams.y;
                 // a = i.test.x / i.test.w * 0.5f + 0.5f;
 
-                // finalColor = modf(half3(2.5f, 0, 0), finalColor);
-                return fixed4(finalColor, 1);
                 // float3x3 mTest = float3x3(
                 //       1, 0, 0
                 //     , 2, 0, 0
@@ -142,6 +152,10 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 1"
                 // float3 vTest = float3(1, 0, 0);
                 // float3 rTest = mul(mTest, vTest);
                 // return fixed4(UNITY_MATRIX_P[3][2] + 1.1, 0, 0, 1);
+
+                // Test _WorldSpaceLightPos0
+                // float3 lightDir = _WorldSpaceLightPos0 + float3( -0.3213938, -0.7660444, 0.5566704) + float3(0.004, 0.004, 0.004);
+                // return fixed4(lightDir, 1);
             }
             ENDCG
         }

@@ -38,6 +38,12 @@ public class TestMatrix : MonoBehaviour {
                 + "\n sp1 = " + (Vector3)sp1 + ", sp2 = " + (Vector3)sp2 + ", sp3 = " + (Vector3)sp3 + ", sp4 = " + (Vector3)sp4
                 + "\n mp1 = " + (Vector3)mp1 + ", mp2 = " + (Vector3)mp2 + ", mp3 = " + (Vector3)mp3 + ", mp4 = " + (Vector3)mp4
         );
+        
+        Quaternion lightRotation = Quaternion.Euler(50, -30, 0);
+        Vector3 lightDir = lightRotation * Vector3.forward;
+        Debug.Log("LightRotation:"
+            + "\n " + lightDir.x + ", " + lightDir.y + ", " + lightDir.z
+            );
     }
 }
 
