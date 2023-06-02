@@ -88,12 +88,17 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 1"
             v2f vert(a2v v)
             {
                 v2f o;
+                // TANGENT_SPACE_ROTATION
+                // UNITY_TANGENT_ORTHONORMALIZE
+                // UNITY_PACK_WORLDPOS_WITH_TANGENT
+                // CreateTangentToWorldPerVertex()
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
                 o.screenPos = ComputeScreenPos(o.pos);
-                o.normal = UnityObjectToWorldNormal(v.vertex);
+                o.normal = UnityObjectToWorldNormal(v.normal);
                 o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
-                o.test = o.pos; // / o.pos.w;
+                o.test = o.pos / o.pos.w;
+                // o.test = ComputeScreenPos(o.test);
                 // float4 tt = o.pos * 0.5f;
                 // tt.xy = float2(tt.x, tt.y*_ProjectionParams.x) + tt.w;
                 // tt.zw = o.pos.zw;
@@ -107,8 +112,13 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 1"
                 // fixed4 texColor = tex2D(_MainTex, i.uv);
                 fixed4 texColor = UNITY_SAMPLE_TEX2D(_MainTex, i.uv);
                 float2 screenUV = i.screenPos.xy / i.screenPos.w;
-                screenUV = (i.test.xy / i.test.w) * 0.5f + 0.5f; screenUV.y = 1-screenUV.y;
-                // screenUV = i.test.xy / i.test.w;
+                
+                // float4 halfTest = i.test * 0.5f;
+                // float2 screenUV = float2(halfTest.x, halfTest.y * _ProjectionParams.x) + 0.5f;
+                // float2 screenUV = ComputeScreenPos(i.test);
+
+                // float2 screenUV = i.test;
+                
                 float depth = Linear01Depth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenUV));
                 half3 depthColor = lerp(half3(0, 0, 0), _Color, depth);
                 float fresnel = pow(1 - max(0, dot(i.normal, i.viewDir)), _EdgePow) * _EdgeMultiple;
@@ -122,7 +132,7 @@ Shader "Unity Shaders Book/Chapter 8/Blend Operations 1"
                 // float a = i.pos.y / _ScreenParams.y;
                 // a = i.test.x / i.test.w * 0.5f + 0.5f;
 
-
+                // finalColor = modf(half3(2.5f, 0, 0), finalColor);
                 return fixed4(finalColor, 1);
                 // float3x3 mTest = float3x3(
                 //       1, 0, 0

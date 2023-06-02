@@ -63,8 +63,8 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeMultiple: 2.68
-    - _EdgePow: 3.42
+    - _EdgeMultiple: 3.51
+    - _EdgePow: 5.93
     - _Glossiness: 0.5
     - _Metallic: 0
     - _Mode: 0
